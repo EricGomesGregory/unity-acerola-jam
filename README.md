@@ -26,3 +26,7 @@ Along the way, you must explore the dungeon defeating monsters and completing pu
 
 
 ### Aesthetical Focus:
+
+
+___
+The chosen idea was **Observed**...
