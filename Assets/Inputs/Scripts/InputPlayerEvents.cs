@@ -5,7 +5,13 @@ using UnityEngine.InputSystem;
 
 public class InputPlayerEvents : InputMap.IPlayerActions
 {
-    public event Vector2Action Move;
+    public event ValueAction<Vector2> Move;
+    public event ValueAction<bool> Jump;
+
+    public void OnJump(InputAction.CallbackContext context) {
+        var value = context.ReadValueAsButton();
+        Jump?.Invoke(value);
+    }
 
     public void OnMove(InputAction.CallbackContext context) {
         var value = context.ReadValue<Vector2>();
@@ -14,6 +20,6 @@ public class InputPlayerEvents : InputMap.IPlayerActions
     }
 
     #region Delegates
-    public delegate void Vector2Action(Vector2 value);
+    public delegate void ValueAction<T>(T value);
     #endregion
 }
