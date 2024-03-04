@@ -26,7 +26,34 @@ Along the way, you must explore the dungeon defeating monsters and completing pu
 
 
 ### Aesthetical Focus:
-
+UNEXPLORED.
 
 ___
 The chosen idea was **Observed**...
+
+# Project Scope
+With the idea chosen I created the following project scope:
+
+## Characters
+### Player
+Before entering the dungeon, the player must select a character but if it dies it becomes unselectable. The characters available to the player are:
+- **HUMAN_FIGHTER:** The basic fighter/knight archetype.
+- **RANGER:** A archer
+- **DWARF:** DESCRIPTION.
+
+### Enemies
+
+## Scenes
+The game will consist of a small number of scenes that build the dungeon, a main menu scene and two outro cinematics for the game, in the case of all player characters death (Game Over) or a player character has reached the mage that controls the dungeon.
+
+### Dungeon
+The dungeon will have the following parts:
+
+#### Introduction/Tutoria
+A introductory area with an entrance room with a puzzle, with the secondary objective of familiarizing the player with the controls and camera system. The next room is a small combat encounter that serves to teach the player how to fight enemies.
+
+#### Dungeon Proper
+DESCRIPTION.
+
+
+
