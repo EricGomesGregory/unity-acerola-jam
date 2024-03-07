@@ -2,7 +2,7 @@
 
 public interface ICharacter
 {
-
+    public IHealth Health { get; }
 }
 
 public interface IInteractor
@@ -13,6 +13,8 @@ public interface IInteractor
 
 public interface IHealth
 {
+    public float Current { get; }
+    public float Total { get; }
     public void Setup(HealthData data);
     public void Reset();
     public void Damage(float value);

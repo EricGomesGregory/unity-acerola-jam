@@ -9,6 +9,10 @@ public class PlayerHealth : IHealth
     [SerializeReference]
     private PlayerHealthObject healthObject;
 
+    public float Current => healthObject.Current;
+
+    public float Total => healthObject.Total;
+
     public void Damage(float value) {
         healthObject.Current = healthObject.Current - value;
     }

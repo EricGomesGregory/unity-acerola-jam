@@ -8,7 +8,7 @@ public class PlayerHealthObject : ScriptableObject
 {
     [SerializeField, Min(0f)]
     private float total = 100f;
-    [SerializeField] //[ReadOnly]
+    [SerializeField, DisplayField]
     private float current;
 
     public float Total {

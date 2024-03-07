@@ -10,22 +10,16 @@ public class HealthTrigger : MonoBehaviour
     private float value = 0f;
 
     private void OnTriggerEnter(Collider other) {
-        if (other.CompareTag("Player")) {
-            HandlePlayer(other);
-        }
-    }
-
-    private void HandlePlayer(Collider other) {
-        if (other.TryGetComponent<PlayerController>(out var player) == false) {
+        if (other.TryGetComponent<ICharacter>(out var character) == false) {
             return;
         }
-
+        
         switch (type) {
             case InteractionType.Damage:
-                player.Health.Damage(value);
+                character.Health.Damage(value);
                 break;
             case InteractionType.Heal:
-                player.Health.Heal(value);
+                character.Health.Heal(value);
                 break;
         }
     }

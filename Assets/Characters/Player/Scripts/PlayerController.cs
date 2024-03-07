@@ -18,8 +18,9 @@ public class PlayerController : MonoBehaviour, ICharacter
     [SerializeField]
     private CharacterInteractor interactor = new();
 
-    public PlayerHealth Health { get => health; }
+    IHealth ICharacter.Health => health;
     public CharacterInteractor Interactor { get => interactor; }
+
 
     private Transform mainCamera;
     private Vector2 moveInput;
@@ -34,6 +35,7 @@ public class PlayerController : MonoBehaviour, ICharacter
 
     private void OnEnable() {
         InputManager.Instance.Player.Move += OnMove;
+        InputManager.Instance.Player.Interact += interactor.OnInteract;
     }
 
     private void OnDisable() {

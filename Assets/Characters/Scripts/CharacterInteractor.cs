@@ -17,6 +17,8 @@ public class CharacterInteractor : IInteractor
 
     private ICharacter interactor;
 
+    public Transform Origin { get => origin; }
+
     public void Initialize(ICharacter interactor) {
         this.interactor = interactor;
     }
