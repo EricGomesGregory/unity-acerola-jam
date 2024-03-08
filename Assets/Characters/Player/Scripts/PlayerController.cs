@@ -105,6 +105,9 @@ public class PlayerController : MonoBehaviour, ICharacter
     }
 
     private void OnAttack() {
+        if (animator.GetBool("isDead")) {
+            return;
+        }
         animator.SetTrigger("Attack");
     }
 
