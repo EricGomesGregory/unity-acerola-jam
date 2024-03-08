@@ -1,3 +1,4 @@
+using Cysharp.Threading.Tasks;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -34,15 +35,32 @@ public class PlayerController : MonoBehaviour, ICharacter
     }
 
     private void OnEnable() {
+        AddEventListeners();
+    }
+
+    private async void AddEventListeners() {
+        await UniTask.WaitUntil(() => InputManager.Instance);
+        await UniTask.WaitUntil(() => InputManager.Instance.Player != null);
+
         InputManager.Instance.Player.Move += OnMove;
         InputManager.Instance.Player.Interact += interactor.OnInteract;
+        InputManager.Instance.Player.Attack += OnAttack;
+
+        health.AddEventToCurrentChanged(OnDeathCheck);
     }
 
     private void OnDisable() {
-        
+        InputManager.Instance.Player.Move -= OnMove;
+        InputManager.Instance.Player.Interact -= interactor.OnInteract;
+
+        health.RemoveEventFromCurrentChanged(OnDeathCheck);
     }
 
     private void Update() {
+        if (animator.GetBool("isDead")) {
+            return;
+        }
+
         var isMoving = moveInput.magnitude > 0.1f;
 
         if (isMoving) {
@@ -84,6 +102,16 @@ public class PlayerController : MonoBehaviour, ICharacter
     private void OnMove(Vector2 value) {
         moveInput = value;
         moveDirection = GetMoveDirection();
+    }
+
+    private void OnAttack() {
+        animator.SetTrigger("Attack");
+    }
+
+    private void OnDeathCheck(float currentHealth) {
+        if (currentHealth <= 0) {
+            animator.SetBool("isDead", true);
+        }
     }
 
     #endregion

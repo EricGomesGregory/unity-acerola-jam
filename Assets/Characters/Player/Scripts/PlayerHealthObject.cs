@@ -29,4 +29,8 @@ public class PlayerHealthObject : ScriptableObject
 
     public event UnityAction<float> TotalChanged;
     public event UnityAction<float> CurrentChanged;
+
+    private void OnValidate() {
+        Current = Total;
+    }
 }

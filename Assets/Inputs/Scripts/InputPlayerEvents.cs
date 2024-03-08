@@ -9,6 +9,7 @@ public class InputPlayerEvents : InputMap.IPlayerActions
     public event ValueAction<Vector2> Move;
     public event ValueAction<bool> Jump;
     public event UnityAction Interact;
+    public event UnityAction Attack;
 
     public void OnJump(InputAction.CallbackContext context) {
         var value = context.ReadValueAsButton();
@@ -24,6 +25,12 @@ public class InputPlayerEvents : InputMap.IPlayerActions
     public void OnInteract(InputAction.CallbackContext context) {
         if (context.phase == InputActionPhase.Performed) {
             Interact?.Invoke();
+        }
+    }
+
+    public void OnAttack(InputAction.CallbackContext context) {
+        if (context.phase == InputActionPhase.Performed) {
+            Attack?.Invoke();
         }
     }
 
