@@ -24,11 +24,13 @@ public class PlayerHealth : IHealth
         healthObject.Current = healthObject.Current + value;
     }
 
-    public void Setup(IHealth.HealthData data) {
-        healthObject.Total = data.Total;
-        healthObject.Current = data.Current;
-
+    public void Setup(IHealth.HealthData? data = null) {
         healthObject.CurrentChanged += HandleCurrentChanged;
+        if (data != null) {
+            healthObject.Total = (float)(data?.Total);
+            healthObject.Current = (float)(data?.Current);
+        }
+        Debug.Log("Setup: health events");
     }
 
     public void Remove() {
@@ -44,6 +46,7 @@ public class PlayerHealth : IHealth
     private void HandleCurrentChanged(float current) {
         if (current <= 0) {
             Death?.Invoke();
+            return;
         }
 
         TakeDamage?.Invoke();

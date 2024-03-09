@@ -34,7 +34,7 @@ public class PlayerController : MonoBehaviour, ICharacter
     
     private void Start() {
         mainCamera = Camera.main.transform;
-        health.Reset();
+        health.Setup();
         attacks.Setup();
     }
 
@@ -78,6 +78,8 @@ public class PlayerController : MonoBehaviour, ICharacter
         
         animator.SetBool("isMoving", isMoving);
         animator.SetFloat("Speed", moveInput.magnitude);
+
+        hasTakenDamage = false;
     }
 
     private void OnAnimatorMove() {
@@ -104,10 +106,18 @@ public class PlayerController : MonoBehaviour, ICharacter
     }
 
     public void BeginAttack() {
+        if (animator.GetBool("isDead")) {
+            return;
+        }
+
         attacks.BeginAttack();
     }
 
     public void EndAttack() {
+        if (animator.GetBool("isDead")) {
+            return;
+        }
+
         attacks.EndAttack();
     }
 
@@ -126,6 +136,7 @@ public class PlayerController : MonoBehaviour, ICharacter
     }
 
     private void OnDeath() {
+        Debug.Log("OnDeath");
         animator.SetBool("isDead", true);
     }
 
@@ -134,7 +145,10 @@ public class PlayerController : MonoBehaviour, ICharacter
             return;
         }
 
+        Debug.Log("OnTakeDamage");
         animator.SetTrigger("TakeDamage");
+
+        hasTakenDamage = true;
     }
 
     #endregion

@@ -44,12 +44,12 @@ public class EnemyController : MonoBehaviour, ICharacter
     }
 
     private void OnValidate() {
-        health.Reset();
+        health.Setup();
     }
 
     private void Start() {
         player = GameManager.Instance.Player;
-        health.Reset();
+        health.Setup();
         
         attacks.Setup(this);
         agent.stoppingDistance = attacks.Range;
@@ -129,10 +129,18 @@ public class EnemyController : MonoBehaviour, ICharacter
     }
 
     public void BeginAttack() {
+        if (animator.GetBool("isDead")) {
+            return;
+        }
+
         attacks.BeginAttack();
     }
 
     public void EndAttack() {
+        if (animator.GetBool("isDead")) {
+            return;
+        }
+
         attacks.EndAttack();
     }
 

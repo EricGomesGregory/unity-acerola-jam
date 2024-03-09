@@ -1364,6 +1364,7 @@ MonoBehaviour:
       m_Bits: 1
   attacks:
     damage: 10
+    range: 2
     meleeWeapon: {fileID: 8357176808453440591}
 --- !u!95 &6525434399341269172
 Animator:

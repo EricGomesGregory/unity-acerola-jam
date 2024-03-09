@@ -38,12 +38,17 @@ public class EnemyHealth : IHealth
         Current = Current + value;
     }
 
+    [ContextMenu("Reset")]
     public void Reset() {
         Current = Total;
     }
 
-    public void Setup(IHealth.HealthData data) {
-        Total = data.Total;
-        Current = data.Current;
+    public void Setup(IHealth.HealthData? data = null) {
+        if (data != null) {
+            Total = (float)(data?.Total);
+            Current = (float)(data?.Current);
+        }
+
+        Reset();
     }
 }

@@ -1,5 +1,7 @@
 
 
+using System;
+
 public interface ICharacter
 {
     public IHealth Health { get; }
@@ -15,7 +17,7 @@ public interface IHealth
 {
     public float Current { get; }
     public float Total { get; }
-    public void Setup(HealthData data);
+    public void Setup(Nullable<HealthData> data = null);
     public void Reset();
     public void Damage(float value);
     public void Heal(float value);
