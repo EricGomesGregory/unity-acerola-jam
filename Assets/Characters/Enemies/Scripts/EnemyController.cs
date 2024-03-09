@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -14,13 +15,17 @@ public class EnemyController : MonoBehaviour, ICharacter
     [SerializeField, Min(0f)]
     private float checkRange = 5f;
     [SerializeField]
-    private LayerMask mask;
-    
+    private LayerMask targetMask;
+    [SerializeField]
+    private LayerMask blockingMask;
+
     [Space]
     [SerializeField]
     private EnemyHealth health;
     [SerializeField]
     private CharacterInteractor interactor;
+    [SerializeField]
+    private EnemyAttacks attacks;
 
     IHealth ICharacter.Health => health;
 
@@ -31,7 +36,6 @@ public class EnemyController : MonoBehaviour, ICharacter
 
     private NavMeshTriangulation Triangulation;
 
-
     private void Awake() {
         Triangulation = NavMesh.CalculateTriangulation();
         animator.applyRootMotion = true;
@@ -39,16 +43,46 @@ public class EnemyController : MonoBehaviour, ICharacter
         agent.updateRotation = true;
     }
 
-    private void Start() {
-        player = GameManager.Instance.Player;
+    private void OnValidate() {
         health.Reset();
     }
 
+    private void Start() {
+        player = GameManager.Instance.Player;
+        health.Reset();
+        
+        attacks.Setup(this);
+        agent.stoppingDistance = attacks.Range;
+    }
+
+    private void OnEnable() {
+        health.CurrentChanged += OnCurrentHealthChanged;
+    }
+
+    private void OnDisable() {
+        health.CurrentChanged -= OnCurrentHealthChanged;
+    }
+
     private void Update() {
-        if (ChechSpehere(interactor.Origin.position, checkRange, mask, out var others)) {
+        if (animator.GetBool("isDead")) {
+            return;
+        }
+
+        if (ChechSpehere(interactor.Origin.position, checkRange, targetMask, out var others)) {
             foreach (var other in others) {
                 if (other.CompareTag("Player")) {
-                    agent.SetDestination(player.transform.position);
+                    var from = interactor.Origin.position;
+                    var to = player.transform.position + Vector3.up;
+                    if (Physics.Linecast(from, to, blockingMask) == false) {
+                        Debug.DrawLine(from, to, Color.green);
+                        agent.SetDestination(player.transform.position);
+                    } else {
+                        Debug.DrawLine(from, to, Color.red);
+                    }
+
+                    if (agent.remainingDistance <= agent.stoppingDistance) {
+                        animator.SetTrigger("Attack");
+                    }
                 }
             }
         }
@@ -94,6 +128,13 @@ public class EnemyController : MonoBehaviour, ICharacter
 
     }
 
+    public void BeginAttack() {
+        attacks.BeginAttack();
+    }
+
+    public void EndAttack() {
+        attacks.EndAttack();
+    }
 
     private void OnDrawGizmosSelected() {
         Gizmos.color = Color.red;
@@ -104,5 +145,10 @@ public class EnemyController : MonoBehaviour, ICharacter
         var data = Physics.OverlapSphere(position, radius, mask);
         result = data;
         return result != null;
+    }
+
+    private void OnCurrentHealthChanged(float currentHealth) {
+        var status = currentHealth <= 0;
+        animator.SetBool("isDead", status);
     }
 }

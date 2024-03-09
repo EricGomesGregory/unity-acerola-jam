@@ -18,20 +18,24 @@ public class PlayerController : MonoBehaviour, ICharacter
     private PlayerHealth health = new();
     [SerializeField]
     private CharacterInteractor interactor = new();
+    [SerializeField]
+    private PlayerAttacks attacks = new();
 
     IHealth ICharacter.Health => health;
     public CharacterInteractor Interactor { get => interactor; }
-
+    public PlayerAttacks Attacks { get => attacks; }
 
     private Transform mainCamera;
     private Vector2 moveInput;
 
     private Vector3 moveDirection;
     private float turnSmoothVelocity;
+    private bool hasTakenDamage = false;
     
     private void Start() {
         mainCamera = Camera.main.transform;
         health.Reset();
+        attacks.Setup();
     }
 
     private void OnEnable() {
@@ -46,14 +50,16 @@ public class PlayerController : MonoBehaviour, ICharacter
         InputManager.Instance.Player.Interact += interactor.OnInteract;
         InputManager.Instance.Player.Attack += OnAttack;
 
-        health.AddEventToCurrentChanged(OnDeathCheck);
+        health.Death += OnDeath;
+        health.TakeDamage += OnTakeDamage;
     }
 
     private void OnDisable() {
         InputManager.Instance.Player.Move -= OnMove;
         InputManager.Instance.Player.Interact -= interactor.OnInteract;
 
-        health.RemoveEventFromCurrentChanged(OnDeathCheck);
+        health.Death -= OnDeath;
+        health.TakeDamage -= OnTakeDamage;
     }
 
     private void Update() {
@@ -97,6 +103,14 @@ public class PlayerController : MonoBehaviour, ICharacter
         return forward * moveInput.y + right * moveInput.x;
     }
 
+    public void BeginAttack() {
+        attacks.BeginAttack();
+    }
+
+    public void EndAttack() {
+        attacks.EndAttack();
+    }
+
     #region Event Listeners
 
     private void OnMove(Vector2 value) {
@@ -111,10 +125,16 @@ public class PlayerController : MonoBehaviour, ICharacter
         animator.SetTrigger("Attack");
     }
 
-    private void OnDeathCheck(float currentHealth) {
-        if (currentHealth <= 0) {
-            animator.SetBool("isDead", true);
+    private void OnDeath() {
+        animator.SetBool("isDead", true);
+    }
+
+    private void OnTakeDamage() {
+        if (hasTakenDamage) {
+            return;
         }
+
+        animator.SetTrigger("TakeDamage");
     }
 
     #endregion

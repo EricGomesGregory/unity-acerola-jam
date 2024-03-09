@@ -11,8 +11,10 @@ public class PlayerHealth : IHealth
     private PlayerHealthObject healthObject;
 
     public float Current => healthObject.Current;
-
     public float Total => healthObject.Total;
+
+    public event UnityAction TakeDamage;
+    public event UnityAction Death;
 
     public void Damage(float value) {
         healthObject.Current = healthObject.Current - value;
@@ -25,6 +27,12 @@ public class PlayerHealth : IHealth
     public void Setup(IHealth.HealthData data) {
         healthObject.Total = data.Total;
         healthObject.Current = data.Current;
+
+        healthObject.CurrentChanged += HandleCurrentChanged;
+    }
+
+    public void Remove() {
+        healthObject.CurrentChanged -= HandleCurrentChanged;
     }
 
     public void Reset() {
@@ -33,19 +41,11 @@ public class PlayerHealth : IHealth
         Debug.Log($"PlayerHealth: Resetting Current: {healthObject.Current}");
     }
 
-    public void AddEventToCurrentChanged(UnityAction<float> callback) {
-        healthObject.CurrentChanged += callback;
-    }
+    private void HandleCurrentChanged(float current) {
+        if (current <= 0) {
+            Death?.Invoke();
+        }
 
-    public void RemoveEventFromCurrentChanged(UnityAction<float> callback) {
-        healthObject.CurrentChanged -= callback;
-    }
-
-    public void AddEventToTotalChanged(UnityAction<float> callback) {
-        healthObject.TotalChanged += callback;
-    }
-
-    public void RemoveEventFromTotalChanged(UnityAction<float> callback) {
-        healthObject.TotalChanged -= callback;
+        TakeDamage?.Invoke();
     }
 }

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 [System.Serializable]
 public class EnemyHealth : IHealth
@@ -10,12 +11,23 @@ public class EnemyHealth : IHealth
     [SerializeField, DisplayField]
     private float current;
 
+    public event UnityAction<float> CurrentChanged;
+    public event UnityAction<float> TotalChanged;
+
+
     public float Total {
         get => total;
-        set => total = Mathf.Max(value, 0f); }
+        set {
+            total = Mathf.Max(value, 0f);
+            TotalChanged?.Invoke(total);
+        }
+    }
     public float Current {
         get => current;
-        set => current = Mathf.Clamp(value, 0f, total);
+        set {
+            current = Mathf.Clamp(value, 0f, total);
+            CurrentChanged?.Invoke(current);
+        }
     }
 
     public void Damage(float value) {
