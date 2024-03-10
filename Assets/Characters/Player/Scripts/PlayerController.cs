@@ -109,7 +109,7 @@ public class PlayerController : MonoBehaviour, ICharacter
         if (animator.GetBool("isDead")) {
             return;
         }
-
+        
         attacks.BeginAttack();
     }
 
@@ -118,6 +118,7 @@ public class PlayerController : MonoBehaviour, ICharacter
             return;
         }
 
+        animator.SetBool("isAttacking", false);
         attacks.EndAttack();
     }
 
@@ -132,7 +133,7 @@ public class PlayerController : MonoBehaviour, ICharacter
         if (animator.GetBool("isDead")) {
             return;
         }
-        animator.SetTrigger("Attack");
+        animator.SetBool("isAttacking", true);
     }
 
     private void OnDeath() {
