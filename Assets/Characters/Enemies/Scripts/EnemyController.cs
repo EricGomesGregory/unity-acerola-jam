@@ -80,7 +80,8 @@ public class EnemyController : MonoBehaviour, ICharacter
                         Debug.DrawLine(from, to, Color.red);
                     }
 
-                    if (agent.remainingDistance <= agent.stoppingDistance) {
+                    var distance = Vector3.Distance(transform.position, player.transform.position);
+                    if (distance <= agent.stoppingDistance) {
                         animator.SetTrigger("Attack");
                     }
                 }
