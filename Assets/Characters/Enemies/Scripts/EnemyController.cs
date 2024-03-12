@@ -1,3 +1,4 @@
+using Cysharp.Threading.Tasks;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -57,11 +58,22 @@ public class EnemyController : MonoBehaviour, ICharacter
 
     private void OnEnable() {
         health.CurrentChanged += OnCurrentHealthChanged;
+        AddEventListeners();
     }
 
     private void OnDisable() {
         health.CurrentChanged -= OnCurrentHealthChanged;
+
+        InputManager.Instance.Player.Pause -= OnPause;
+        InputManager.Instance.UI.Unpause -= OnUnpause;
     }
+
+    private async void AddEventListeners() {
+        await UniTask.WaitUntil(() => InputManager.Instance);
+        InputManager.Instance.Player.Pause += OnPause;
+        InputManager.Instance.UI.Unpause += OnUnpause;
+    }
+
 
     private void Update() {
         if (animator.GetBool("isDead")) {
@@ -159,5 +171,13 @@ public class EnemyController : MonoBehaviour, ICharacter
     private void OnCurrentHealthChanged(float currentHealth) {
         var status = currentHealth <= 0;
         animator.SetBool("isDead", status);
+    }
+
+    private void OnPause() {
+        animator.speed = 0f;
+    }
+
+    private void OnUnpause() {
+        animator.speed = 1f;
     }
 }

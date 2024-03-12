@@ -49,6 +49,9 @@ public class PlayerController : MonoBehaviour, ICharacter
         InputManager.Instance.Player.Move += OnMove;
         InputManager.Instance.Player.Interact += interactor.OnInteract;
         InputManager.Instance.Player.Attack += OnAttack;
+        InputManager.Instance.Player.Pause += OnPause;
+
+        InputManager.Instance.UI.Unpause += OnUnpause;
 
         health.Death += OnDeath;
         health.TakeDamage += OnTakeDamage;
@@ -57,6 +60,8 @@ public class PlayerController : MonoBehaviour, ICharacter
     private void OnDisable() {
         InputManager.Instance.Player.Move -= OnMove;
         InputManager.Instance.Player.Interact -= interactor.OnInteract;
+        InputManager.Instance.Player.Attack -= OnAttack;
+        InputManager.Instance.Player.Pause -= OnPause;
 
         health.Death -= OnDeath;
         health.TakeDamage -= OnTakeDamage;
@@ -118,8 +123,8 @@ public class PlayerController : MonoBehaviour, ICharacter
             return;
         }
 
-        animator.SetBool("isAttacking", false);
         attacks.EndAttack();
+        animator.SetBool("isAttacking", false);
     }
 
     #region Event Listeners
@@ -150,6 +155,14 @@ public class PlayerController : MonoBehaviour, ICharacter
         animator.SetTrigger("TakeDamage");
 
         hasTakenDamage = true;
+    }
+
+    private void OnPause() {
+        animator.speed = 0f;
+    }
+
+    private void OnUnpause() {
+        animator.speed = 1f;
     }
 
     #endregion
