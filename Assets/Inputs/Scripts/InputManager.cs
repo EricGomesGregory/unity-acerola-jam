@@ -35,9 +35,17 @@ public class InputManager : MonoBehaviour
         inputMap.UI.RemoveCallbacks(uiEvents);
     }
 
+    public void Pause() {
+        playerEvents.ForcePause();
+    }
+
     private void OnPause() {
         inputMap.Player.Disable();
         inputMap.UI.Enable();
+    }
+
+    public void Unpause() {
+        uiEvents.ForceUnpause();
     }
 
     private void OnUnpause() {

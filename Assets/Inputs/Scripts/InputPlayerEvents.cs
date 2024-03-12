@@ -43,7 +43,13 @@ public class InputPlayerEvents : InputMap.IPlayerActions
         }
     }
 
+    public void ForcePause() {
+        Pause?.Invoke();
+    }
+
     #region Delegates
+
     public delegate void ValueAction<T>(T value);
+
     #endregion
 }
