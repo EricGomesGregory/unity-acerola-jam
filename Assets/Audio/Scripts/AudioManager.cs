@@ -1,3 +1,4 @@
+using Cysharp.Threading.Tasks;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -11,48 +12,44 @@ public class AudioManager : MonoBehaviour
     private AudioMixer mixer;
     [SerializeField]
     private AudioSettingsObject settings;
-    [SerializeField, Min(0)]
-    private int defaultSize = 10;
-    [SerializeField, Min(0)]
-    private int maxSize = 20;
 
-    private ObjectPool<AudioEmmiter> pool;
+    [SerializeField]
+    private MusicController music;
+    [SerializeField]
+    private EffectsController effects;
 
     public static AudioManager Instance { get; private set; }
-
+    public MusicController Music { get => music; }
+    public EffectsController Effects { get => effects; }
 
     private void Awake() {
         Instance = this;
     }
 
+    private void OnEnable() {
+        AddListeners();
+    }
+
+    private async void AddListeners() {
+        await UniTask.WaitUntil(() => InputManager.Instance);
+
+        InputManager.Instance.Player.Pause += OnPause;
+        InputManager.Instance.UI.Unpause += OnUnpuase;
+    }
+
+    private void OnDisable() {
+        
+    }
+
     private void Start() {
-        pool = new ObjectPool<AudioEmmiter>(CreateAudioemmiter, GetAudioEmmiter, ReleaseAudioEmmiter, DestroyAudioEmmiter, false, defaultSize, maxSize);
+        Effects.Initialize();
     }
 
-    public bool TryGet(out AudioEmmiter emmiter) {
-        emmiter = pool.Get();
-        return emmiter;
+    private void OnPause() {
+        music.Pause();
     }
 
-    #region Pool 
-
-    private AudioEmmiter CreateAudioemmiter() {
-        var emmiter = Instantiate(new AudioEmmiter(), transform);
-        emmiter.Setup(ReleaseAudioEmmiter);
-        return emmiter;
+    private void OnUnpuase() {
+        music.Play();
     }
-
-    private void GetAudioEmmiter(AudioEmmiter emmiter) {
-        emmiter.Play();
-    }
-
-    private void ReleaseAudioEmmiter(AudioEmmiter emmiter) {
-        emmiter.Pause();
-    }
-
-    private void DestroyAudioEmmiter(AudioEmmiter emmiter) {
-        Destroy(emmiter);
-    }
-
-    #endregion
 }
