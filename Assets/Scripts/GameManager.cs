@@ -21,4 +21,8 @@ public class GameManager : MonoBehaviour
     private void Awake() {
         Instance = this;
     }
+
+    public void Quit() {
+        Application.Quit();
+    }
 }
